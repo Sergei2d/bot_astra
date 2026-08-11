@@ -1,0 +1,25 @@
+name: Email to Telegram bridge
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  check-and-forward:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Проверить почту и переслать в Telegram
+        env:
+          IMAP_HOST: imap.yandex.ru
+          IMAP_USER: ${{ secrets.SMTP_EMAIL }}
+          IMAP_PASSWORD: ${{ secrets.SMTP_APP_PASSWORD }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 email_to_telegram.py
